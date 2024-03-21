@@ -4,5 +4,7 @@ import {ObjectFactory} from "./object.factory.ts";
 
 const projectFactory = new ObjectFactory();
 const engine = new Engine(projectFactory);
-engine.start();
+engine.init().then(() => {
+    engine.start();
+})
 

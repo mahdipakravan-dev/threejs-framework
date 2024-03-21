@@ -24,16 +24,17 @@ export class Engine {
         this.control.enableDamping = true
         this.pane = new Pane();
         this.engineFactory = engineFactory
+    }
 
+    public async init() {
         this.setup();
         this.bindEvents();
-        this.engineFactory.createMaterials(this)
-        this.engineFactory.createMeshes(this)
-        this.engineFactory.addLights(this)
+        await this.engineFactory.createMaterials(this)
+        await this.engineFactory.createMeshes(this)
+        await this.engineFactory.addLights(this)
     }
 
     start() {
-
         return requestAnimationFrame(() => {
             this.control.update();
             this.engineFactory.animate(this)
@@ -56,11 +57,11 @@ export class Engine {
 export abstract class EngineFactory {
     constructor() {}
 
-    abstract createMeshes(engine : Engine): void
+    abstract createMeshes(engine : Engine): void | Promise<void>
 
-    abstract createMaterials(engine : Engine): void
+    abstract createMaterials(engine : Engine): void | Promise<void>
 
-    abstract addLights(engine : Engine) :void
+    abstract addLights(engine : Engine) :void | Promise<void>
 
-    abstract animate(engine : Engine): void
+    abstract animate(engine : Engine): void | Promise<void>
 }
