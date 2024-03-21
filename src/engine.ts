@@ -22,8 +22,6 @@ export class Engine {
         this.renderer.shadowMap.enabled = true;
         this.control = new OrbitControls(this.camera , this.renderer.domElement);
         this.control.enableDamping = true
-        // this.control.dampingFactor = 0.05;
-        // this.control.maxPolarAngle = Math.PI / 2;
         this.pane = new Pane();
         this.engineFactory = engineFactory
 
@@ -41,7 +39,6 @@ export class Engine {
             this.engineFactory.animate(this)
             this.renderer.render(this.scene, this.camera);
 
-            console.log('ReRender')
             this.start.bind(this)();
         });
     }
