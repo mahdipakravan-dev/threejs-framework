@@ -7,11 +7,11 @@ export class ObjectFactory extends EngineFactory {
     async createMeshes(engine){
         try {
             const model = await Loader.load('/boombox/BoomBox.gltf')
+            console.log("MODEL",model)
             model.scene.scale.setScalar(100)
-            
             engine.scene.add( model.scene );
         } catch (e) {
-
+            console.log('CRASHED ' , e)
         }
     }
     createMaterials(engine) {

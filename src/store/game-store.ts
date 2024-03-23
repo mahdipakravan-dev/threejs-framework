@@ -1,28 +1,20 @@
 import {devtools} from 'zustand/middleware';
-import {GLTF} from 'three/addons/loaders/GLTFLoader.js';
 import {createStore} from "zustand/vanilla";
 
-export type Asset = {
-    loaded ?: boolean
-    gltf ?: GLTF
-}
 const initialState: GameState = {
-    assets : {}
+    loaded_assets : {}
 };
 
 type GameState = {
-    assets : Record<string, Asset>
+    loaded_assets : Record<string, boolean>
 };
 export const gameState = createStore(devtools<GameState>(() => initialState, { name: 'GameState' }));
 export const gameActions = {
-    updateLoading(assetPath : string , asset : Asset) {
+    updateLoading(assetPath : string , loaded : boolean) {
         gameState.setState({
-            assets : {
-                ...gameState.getState(),
-                [assetPath] : {
-                    ...gameState.getState().assets[assetPath],
-                    ...asset
-                }
+            loaded_assets : {
+                ...gameState.getState().loaded_assets,
+                [assetPath] : loaded
             }
         });
     },

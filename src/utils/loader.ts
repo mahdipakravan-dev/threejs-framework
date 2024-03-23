@@ -3,18 +3,17 @@ import {gameActions} from "../store/game-store.ts";
 
 const gltfLoader = new GLTFLoader().setPath("models");
 export class Loader {
-    static _instances : Record<string, GLTF>
-    constructor() {}
-
+    static _instances : Record<string, GLTF> = {}
     static load(path : string) : Promise<GLTF>{
-        gameActions.updateLoading(path , {loaded : false})
+        gameActions.updateLoading(path , false)
         return new Promise(async (resolve, reject) => {
             try {
                 const gltf = await gltfLoader.loadAsync(path)
-                gameActions.updateLoading(path , {loaded : true });
-                resolve(gltf)
+                gameActions.updateLoading(path , true);
+                Loader._instances[path] = gltf;
+                return resolve(gltf)
             } catch (e) {
-                reject(e)
+                return reject(e)
             }
         })
     }
