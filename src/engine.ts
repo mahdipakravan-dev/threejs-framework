@@ -3,6 +3,7 @@ import { OrbitControls } from 'three-orbitcontrols-ts';
 import {Pane} from "tweakpane";
 import {Pane as PaneType} from "tweakpane/dist/types/pane/pane";
 import {handleResize} from "./listeners/resize.ts";
+import {LoaderFactory} from "./utils/loader.factory.ts";
 
 export class Engine {
     public scene: THREE.Scene;
@@ -10,8 +11,9 @@ export class Engine {
     public renderer: THREE.WebGLRenderer;
     public canvas: HTMLElement;
     public control: OrbitControls;
-    public engineFactory: EngineFactory;
     public pane: PaneType
+    public engineFactory: EngineFactory;
+    public loaderFactory: LoaderFactory
 
     constructor(engineFactory : EngineFactory) {
         this.scene = new THREE.Scene();
@@ -24,6 +26,7 @@ export class Engine {
         this.control.enableDamping = true
         this.pane = new Pane();
         this.engineFactory = engineFactory
+        this.loaderFactory = new LoaderFactory();
     }
 
     public async init() {
