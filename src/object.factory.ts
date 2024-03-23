@@ -1,23 +1,24 @@
 import {EngineFactory} from "./engine.ts";
 import * as THREE from "three";
-import {BackgroundTexture} from "./textures/background.ts";
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import {BackgroundStreet} from "./textures/background-street.ts";
+import {Loader} from "./utils/loader.ts";
 
-const gltfLoader = new GLTFLoader().setPath("models");
 export class ObjectFactory extends EngineFactory {
     async createMeshes(engine){
         try {
-            const model = await gltfLoader.loadAsync('/boombox/BoomBox.gltf');
+            const model = await Loader.load('/boombox/BoomBox.gltf')
             model.scene.scale.setScalar(100)
+            
             engine.scene.add( model.scene );
         } catch (e) {
 
         }
     }
     createMaterials(engine) {
-        new BackgroundTexture();
+        new BackgroundStreet();
 
-        engine.scene.background = new THREE.Color("rgba(0,0,0,0.8)")
+        engine.scene.background = BackgroundStreet._obj
+        engine.scene.environment = BackgroundStreet._obj
     }
     addLights(engine) {
         const ambientLight = new THREE.AmbientLight(0xffffff , 5);
