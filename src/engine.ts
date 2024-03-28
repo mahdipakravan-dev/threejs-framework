@@ -20,7 +20,7 @@ export class Engine {
     constructor(engineFactory : EngineFactory , physicFactory : ObjectPhysic) {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight , 2 , 500);
-        this.camera.position.set(8,8,10)
+        this.camera.position.set(30,22,0)
         this.canvas = document.getElementById("threejs")!;
         this.renderer = new THREE.WebGLRenderer({ canvas : this.canvas, antialias: true });
         this.renderer.shadowMap.enabled = true;
@@ -61,7 +61,6 @@ export class Engine {
     }
 }
 export abstract class EngineFactory {
-    constructor() {}
 
     abstract createMeshes(engine : Engine): void | Promise<void>
 
