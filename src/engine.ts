@@ -1,10 +1,9 @@
 import * as THREE from "three";
-import { OrbitControls } from 'three-orbitcontrols-ts';
+import {OrbitControls} from 'three-orbitcontrols-ts';
 import {Pane} from "tweakpane";
 import {Pane as PaneType} from "tweakpane/dist/types/pane/pane";
 import {handleResize} from "./listeners/resize.ts";
 import {LoaderFactory} from "./utils/loader.factory.ts";
-import {ObjectPhysic} from "./physics/object.physic.ts";
 
 export class Engine {
     public scene: THREE.Scene;
@@ -15,9 +14,8 @@ export class Engine {
     public pane: PaneType
     public engineFactory: EngineFactory;
     public loaderFactory: LoaderFactory
-    public physicFactory : ObjectPhysic;
 
-    constructor(engineFactory : EngineFactory , physicFactory : ObjectPhysic) {
+    constructor(engineFactory : EngineFactory) {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight , 2 , 500);
         this.camera.position.set(30,22,0)
@@ -28,7 +26,6 @@ export class Engine {
         this.control.enableDamping = true
         this.pane = new Pane();
         this.engineFactory = engineFactory
-        this.physicFactory = physicFactory
         this.loaderFactory = new LoaderFactory();
     }
 

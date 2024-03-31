@@ -1,4 +1,4 @@
-import type {ColliderDesc,RigidBody, World} from "@dimforge/rapier3d";
+import type {RigidBody, World} from "@dimforge/rapier3d";
 
 export class ObjectPhysic {
     public _world : World | undefined;

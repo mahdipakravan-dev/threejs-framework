@@ -2,11 +2,13 @@ import {devtools} from 'zustand/middleware';
 import {createStore} from "zustand/vanilla";
 
 const initialState: GameState = {
-    loaded_assets : {}
+    loaded_assets : {},
+    physic_loading : true,
 };
 
 type GameState = {
     loaded_assets : Record<string, boolean>
+    physic_loading : boolean
 };
 export const gameState = createStore(devtools<GameState>(() => initialState, { name: 'GameState' }));
 export const gameActions = {
@@ -18,4 +20,9 @@ export const gameActions = {
             }
         });
     },
+    updatePhysicLoading(physic_loading : boolean) {
+        gameState.setState({
+            physic_loading
+        })
+    }
 };

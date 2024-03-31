@@ -1,13 +1,16 @@
 import "./styles/style.css"
 import {Engine} from "./engine.ts";
-import {ObjectFactory} from "./object.factory.ts";
-import {ObjectPhysic} from "./physics/object.physic.ts";
+import {DropsFactory} from "./drops.factory.ts";
+import {gameState} from "./store/game-store.ts";
 
 
-const projectFactory = new ObjectFactory();
-const physicFactory = new ObjectPhysic();
-const engine = new Engine(projectFactory , physicFactory);
-engine.init().then(() => {
-    engine.start();
+const projectFactory = new DropsFactory();
+const engine = new Engine(projectFactory);
+
+gameState.subscribe(state => {
+    if(!state.physic_loading) engine.init().then(() => {
+        engine.start()
+    })
 })
+
 

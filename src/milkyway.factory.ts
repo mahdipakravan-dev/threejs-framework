@@ -27,7 +27,6 @@ export class MilkyWayFactory extends EngineFactory {
         engine.scene.background = BackgroundTexture._obj
     }
     addLights(engine): void {
-        console.log("ADD LIGHTS " , engine)
         const pointLight = new THREE.PointLight(0xffffff , 2)
         pointLight.position.set(0,0,0);
         engine.scene.add(pointLight);
