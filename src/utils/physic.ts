@@ -19,14 +19,20 @@ export class Physic {
         });
     }
 
-    addPhysicalRigid(mesh : THREE.Mesh , type : "dynamic" | "fixed" , collider : "cuboid"| "ball" | "trimesh") {
+    addPhysicalRigid(mesh : THREE.Mesh , type : "dynamic" | "fixed" | "kinematic" , collider : "cuboid"| "ball" | "trimesh") {
         let rigidBodyType;
-        if(type === "dynamic") {
-            rigidBodyType = this._rappier.RigidBodyDesc.dynamic()
-        } else if(type === "fixed") {
-            rigidBodyType = this._rappier.RigidBodyDesc.fixed()
+        switch (type) {
+            case "dynamic":
+                rigidBodyType = this._rappier.RigidBodyDesc.dynamic()
+                break
+            case "fixed":
+                rigidBodyType = this._rappier.RigidBodyDesc.fixed()
+                break
+            case "kinematic":
+                rigidBodyType = this._rappier.RigidBodyDesc.kinematicVelocityBased()
+
         }
-        this.rigidBody = this._world?.createRigidBody(rigidBodyType)!
+        const rigidBody = this._world?.createRigidBody(rigidBodyType)!
 
         let colliderType : any;
         switch (collider) {
@@ -37,22 +43,23 @@ export class Physic {
                     meshSize.y / 2,
                     meshSize.z / 2,
                 )
-                this._world?.createCollider(colliderType , this.rigidBody)
+                this._world?.createCollider(colliderType , rigidBody)
                 break
             }
             case "ball" : {
                 const meshSize = this.computeBallDimension(mesh);
                 if (meshSize) colliderType = this._rappier.ColliderDesc.ball(1)
-                this._world?.createCollider(colliderType , this.rigidBody)
+                this._world?.createCollider(colliderType , rigidBody)
                 break
             }
         }
 
-        this.rigidBody?.setTranslation(mesh.getWorldPosition(new THREE.Vector3()) , true)
-        this.rigidBody?.setRotation(mesh.getWorldQuaternion(new THREE.Quaternion()) , true);
+        rigidBody?.setTranslation(mesh.getWorldPosition(new THREE.Vector3()) , true)
+        rigidBody?.setRotation(mesh.getWorldQuaternion(new THREE.Quaternion()) , true);
 
         //add to meshMap
-        this.meshMap.set(mesh , this.rigidBody)
+        this.meshMap.set(mesh , rigidBody)
+        return rigidBody
     }
 
     computeCuboidDimension(mesh : THREE.Mesh) {
@@ -78,17 +85,17 @@ export class Physic {
             const rigidBodyPosition = new THREE.Vector3().copy(rigidBody.translation())
             const rigidBodyRotation = new THREE.Quaternion().copy(rigidBody.rotation())
 
-            if(mesh.parent?.matrixWorld) {
+            // if(mesh.parent?.matrixWorld) {
                 rigidBodyPosition.applyMatrix4(
-                    new THREE.Matrix4().copy(mesh.parent?.matrixWorld).invert()
+                    new THREE.Matrix4().copy(mesh.parent?.matrixWorld as any).invert()
                 )
                 const inverseParentMatrix = new THREE.Matrix4()
-                    .extractRotation(mesh.parent.matrixWorld)
+                    .extractRotation(mesh.parent?.matrixWorld as any)
                     .invert();
-                const inverseParentRotateion = new THREE.Quaternion()
+                const inverseParentRotation = new THREE.Quaternion()
                     .setFromRotationMatrix(inverseParentMatrix);
-                rigidBodyRotation.premultiply(inverseParentRotateion)
-            }
+                rigidBodyRotation.premultiply(inverseParentRotation)
+            // }
 
             mesh.position.copy(rigidBodyPosition)
             mesh.quaternion.copy(rigidBodyRotation);

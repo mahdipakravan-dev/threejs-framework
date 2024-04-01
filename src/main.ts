@@ -1,6 +1,6 @@
 import "./styles/style.css"
 import {Engine} from "./engine.ts";
-import {DropsFactory} from "./drops.factory.ts";
+import {DropsFactory} from "./projects/drops/drops.factory.ts";
 import {gameState} from "./store/game-store.ts";
 
 

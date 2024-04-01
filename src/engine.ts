@@ -4,6 +4,7 @@ import {Pane} from "tweakpane";
 import {Pane as PaneType} from "tweakpane/dist/types/pane/pane";
 import {handleResize} from "./listeners/resize.ts";
 import {LoaderFactory} from "./utils/loader.factory.ts";
+import {InputController} from "./utils/input-controller.ts";
 
 export class Engine {
     public scene: THREE.Scene;
@@ -32,6 +33,7 @@ export class Engine {
         this.pane = new Pane();
         this.engineFactory = engineFactory
         this.loaderFactory = new LoaderFactory();
+        new InputController();
     }
 
     public async init() {
