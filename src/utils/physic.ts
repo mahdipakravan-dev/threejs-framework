@@ -11,7 +11,7 @@ export class Physic {
         gameActions.updatePhysicLoading(true);
         this.meshMap = new Map()
         import('@dimforge/rapier3d').then((RAPIER) => {
-            let gravity = {x: 1.0, y: -7.81, z: 0.5};
+            let gravity = {x: 0, y: -10.81, z: 0};
             this._rappier = RAPIER
             this._world = new RAPIER.World(gravity);
 

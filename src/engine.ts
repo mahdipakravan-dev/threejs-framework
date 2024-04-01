@@ -17,13 +17,18 @@ export class Engine {
 
     constructor(engineFactory : EngineFactory) {
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight , 2 , 500);
-        this.camera.position.set(30,22,0)
+        this.camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight , 2 , 5000);
+        // this.camera.position.set(30,100,-100)
+        this.camera.position.y += 10
+        this.camera.position.x += 40
+        this.camera.position.z = -100
         this.canvas = document.getElementById("threejs")!;
         this.renderer = new THREE.WebGLRenderer({ canvas : this.canvas, antialias: true });
         this.renderer.shadowMap.enabled = true;
         this.control = new OrbitControls(this.camera , this.renderer.domElement);
         this.control.enableDamping = true
+        this.control.enableRotate = true
+        this.control.enablePan = true
         this.pane = new Pane();
         this.engineFactory = engineFactory
         this.loaderFactory = new LoaderFactory();

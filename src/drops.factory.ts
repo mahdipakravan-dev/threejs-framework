@@ -2,6 +2,7 @@ import * as THREE from "three";
 import {EngineFactory} from "./engine.ts";
 import {BackgroundStreet} from "./textures/background-street.ts";
 import {Physic} from "./utils/physic.ts";
+import {EarthMaterial} from "./textures/earth.ts";
 
 export class DropsFactory extends EngineFactory {
     public physic : Physic;
@@ -18,27 +19,41 @@ export class DropsFactory extends EngineFactory {
                 new THREE.MeshStandardMaterial({color : "#8a8a8a"}),
             )
             groundMesh.position.y -= 10;
+            groundMesh.scale.x += 4
+            groundMesh.scale.z += 4
             this.physic.addPhysicalRigid(groundMesh , "fixed" , "cuboid");
             engine.scene.add(groundMesh)
 
-            const cubeMesh = new THREE.Mesh(
-                new THREE.BoxGeometry(1,1,1),
-                new THREE.MeshBasicMaterial({color : "blue"})
-            )
-            const cubeMesh2 = new THREE.Mesh(
-                new THREE.BoxGeometry(1,1,1),
-                new THREE.MeshBasicMaterial({color : "red"})
-            )
-            cubeMesh2.position.x += 3
-            engine.scene.add(cubeMesh , cubeMesh2)
-            this.physic.addPhysicalRigid(cubeMesh , "dynamic" , "cuboid")
-            this.physic.addPhysicalRigid(cubeMesh2 , "dynamic" , "cuboid")
+            for(let i=0 ; i <= 10; i++) {
+                const sphereMesh = new THREE.Mesh(
+                    new THREE.BoxGeometry(2,2),
+                    EarthMaterial._obj
+                )
+                sphereMesh.position.set(
+                    (Math.random() - 0.5) * 10,
+                    (Math.random() + 5) * 10,
+                    (Math.random() - 0.5) * 10
+                )
+                sphereMesh.scale.set(
+                    Math.random() + 0.5,
+                    Math.random() + 0.5,
+                    Math.random() + 0.5,
+                )
+                sphereMesh.rotation.set(
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                )
+                engine.scene.add(sphereMesh)
+                this.physic.addPhysicalRigid(sphereMesh , "dynamic" , "cuboid")
+            }
         } catch (e) {
             console.error('CRASHED ' , e)
         }
     }
     createMaterials(engine) {
         new BackgroundStreet();
+        new EarthMaterial()
 
         engine.scene.background = BackgroundStreet._obj
         engine.scene.environment = BackgroundStreet._obj
