@@ -1,14 +1,16 @@
 import * as THREE from "three";
-import {EngineFactory} from "../../engine.ts";
+import {Engine, EngineFactory} from "../../engine.ts";
 import {BackgroundStreet} from "../../textures/background-street.ts";
 import {Physic} from "../../utils/physic.ts";
 import {EarthMaterial} from "../../textures/earth.ts";
 import {Character} from "./character.ts";
 import {gameState} from "../../store/game-store.ts";
+import {DropsCamera} from "./camera.ts";
 
 export class DropsFactory extends EngineFactory {
     public physic : Physic;
     public character ?: Character;
+    public camera ?: DropsCamera
 
     constructor() {
         super();
@@ -17,6 +19,7 @@ export class DropsFactory extends EngineFactory {
         gameState.subscribe(({physic_loading}) => {
             if(!physic_loading) {
                 this.character = new Character(this.physic)
+                this.camera = new DropsCamera(this.character)
             }
         })
     }
@@ -94,8 +97,9 @@ export class DropsFactory extends EngineFactory {
 
         engine.scene.add(ambientLight , directLight);
     }
-    animate() {
+    animate(engine : Engine) {
         this.physic.loop();
         this.character?.loop();
+        this.camera?.loop(engine)
     }
 }
