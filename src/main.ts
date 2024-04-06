@@ -8,9 +8,7 @@ const projectFactory = new DropsFactory();
 const engine = new Engine(projectFactory);
 
 gameState.subscribe(state => {
-    if(!state.physic_loading) engine.init().then(() => {
-        engine.start()
-    })
+    if(!state.physic_loading) engine.init()
 })
 
 

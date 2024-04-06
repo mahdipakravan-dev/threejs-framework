@@ -3,8 +3,10 @@ import {Physic} from "../../utils/physic.ts";
 import {inputInitialState, inputState} from "../../store/input-store.ts";
 import {Collider, KinematicCharacterController, RigidBody, RigidBodyType} from "@dimforge/rapier3d";
 import {Engine} from "../../engine.ts";
+import {GLTF} from 'three/addons/loaders/GLTFLoader.js';
 
 export class Character {
+    static _obj ?: GLTF
     public character ?: THREE.Mesh
     public characterRigidBody ?: RigidBody
     public characterRigidBodyType ?: RigidBodyType
@@ -20,16 +22,17 @@ export class Character {
 
 
     createMesh(engine : Engine) {
+        if(!Character._obj) return
         this.character = new THREE.Mesh(
-            new THREE.BoxGeometry(8,8 , 8),
-            new THREE.MeshStandardMaterial({color : "green"})
+            new THREE.BoxGeometry(8,28 , 8),
+            new THREE.MeshStandardMaterial({color : "green" , wireframe : true})
         )
-        this.character.position.set(10,0,-10)
+        this.character.position.set(10,10,-10)
 
         engine.scene.add(this.character)
         this.characterRigidBodyType = this.physic._rappier.RigidBodyDesc.kinematicPositionBased()
         this.characterRigidBody = this.physic._world?.createRigidBody(this.characterRigidBodyType as any)
-        this.colliderType = this.physic._rappier.ColliderDesc.cuboid(4,4,4);
+        this.colliderType = this.physic._rappier.ColliderDesc.cuboid(4,14,4);
         this.collider = this.physic._world?.createCollider(
             this.colliderType,
             this.characterRigidBody
@@ -41,6 +44,12 @@ export class Character {
         this.characterController.setApplyImpulsesToDynamicBodies(true)
         this.characterController.enableAutostep(3 , 0.1 , false)
         this.characterController.enableSnapToGround(0.1)
+
+        Character._obj.scene.scale.setScalar(15)
+        Character._obj.scene.rotation.y = Math.PI
+        Character._obj.scene.position.y -= 14
+        this.character.add(Character._obj.scene)
+
     }
 
     loop() {

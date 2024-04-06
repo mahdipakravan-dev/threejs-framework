@@ -6,6 +6,9 @@ import {EarthMaterial} from "../../textures/earth.ts";
 import {Character} from "./character.ts";
 import {gameState} from "../../store/game-store.ts";
 import {DropsCamera} from "./camera.ts";
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+
+const gltfLoader = new GLTFLoader().setPath("models");
 
 export class DropsFactory extends EngineFactory {
     public physic : Physic;
@@ -16,16 +19,22 @@ export class DropsFactory extends EngineFactory {
         super();
         this.physic = new Physic();
 
-        gameState.subscribe(({physic_loading}) => {
-            if(!physic_loading) {
-                this.character = new Character(this.physic)
-                this.camera = new DropsCamera(this.character)
-            }
+        gltfLoader.load('/character/character.glb' , (loaded) => {
+            Character._obj = loaded
+            gameState.setState({character_loading : false})
+        } , (progress) => {
+            console.log("progress",progress)
         })
+    }
+
+    init() {
+        this.character = new Character(this.physic)
+        this.camera = new DropsCamera(this.character)
     }
 
     async createMeshes(engine){
         try {
+            this.camera?.init(engine)
             const groundMesh = new THREE.Mesh(
                 new THREE.BoxGeometry(10,1,10),
                 new THREE.MeshStandardMaterial({color : "#8a8a8a"}),
@@ -92,10 +101,8 @@ export class DropsFactory extends EngineFactory {
         engine.scene.environment = BackgroundStreet._obj
     }
     addLights(engine) {
-        const ambientLight = new THREE.AmbientLight(0xffffff , 5);
-        const directLight = new THREE.DirectionalLight(0xffffff , 1);
-
-        engine.scene.add(ambientLight , directLight);
+        const ambientLight = new THREE.AmbientLight(0xffffff , 1);
+        engine.scene.add(ambientLight);
     }
     animate(engine : Engine) {
         this.physic.loop();

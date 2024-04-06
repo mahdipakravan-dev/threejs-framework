@@ -3,6 +3,7 @@ import {Pane} from "tweakpane";
 import {Pane as PaneType} from "tweakpane/dist/types/pane/pane";
 import {LoaderFactory} from "./utils/loader.factory.ts";
 import {InputController} from "./utils/input-controller.ts";
+import {gameState} from "./store/game-store.ts";
 
 export class Engine {
     public scene: THREE.Scene;
@@ -26,9 +27,18 @@ export class Engine {
     public async init() {
         this.setup();
         this.bindEvents();
+
         await this.engineFactory.createMaterials(this)
         await this.engineFactory.createMeshes(this)
         await this.engineFactory.addLights(this)
+
+        gameState.subscribe(async ({physic_loading , character_loading}) => {
+            if(!physic_loading && !character_loading) {
+                await this.engineFactory.init(this)
+                this.start()
+            }
+        })
+
     }
 
     start() {
@@ -47,6 +57,8 @@ export class Engine {
     }
 }
 export abstract class EngineFactory {
+
+    abstract init(engine : Engine): void | Promise<void>
 
     abstract createMeshes(engine : Engine): void | Promise<void>
 

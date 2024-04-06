@@ -4,11 +4,13 @@ import {createStore} from "zustand/vanilla";
 const initialState: GameState = {
     loaded_assets : {},
     physic_loading : true,
+    character_loading : true,
 };
 
 type GameState = {
     loaded_assets : Record<string, boolean>
     physic_loading : boolean
+    character_loading : boolean
 };
 export const gameState = createStore(devtools<GameState>(() => initialState, { name: 'GameState' }));
 export const gameActions = {

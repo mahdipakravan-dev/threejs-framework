@@ -11,8 +11,10 @@ export class Loader {
                 const gltf = await gltfLoader.loadAsync(path)
                 gameActions.updateLoading(path , true);
                 Loader._instances[path] = gltf;
+                console.log("Loaded " , gltf)
                 return resolve(gltf)
             } catch (e) {
+                console.log("ERROR IN LOAD " , e)
                 return reject(e)
             }
         })
