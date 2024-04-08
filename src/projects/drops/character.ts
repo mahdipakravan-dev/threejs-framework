@@ -31,7 +31,7 @@ export class Character {
             this.animations!.set(clip.name , this.mixer!.clipAction(clip))
         })
 
-        this.animations.get("WALKING")?.play();
+        this.animations.get("WALK")?.play();
     }
 
 
