@@ -5,6 +5,8 @@ import {LoaderFactory} from "./utils/loader.factory.ts";
 import {InputController} from "./utils/input-controller.ts";
 import {gameState} from "./store/game-store.ts";
 
+const Clock = new THREE.Clock();
+
 export class Engine {
     public scene: THREE.Scene;
     public renderer: THREE.WebGLRenderer;
@@ -43,7 +45,7 @@ export class Engine {
 
     start() {
         return requestAnimationFrame(() => {
-            this.engineFactory.animate(this)
+            this.engineFactory.animate(this , Clock.getDelta())
             this.start.bind(this)();
         });
     }
@@ -66,5 +68,5 @@ export abstract class EngineFactory {
 
     abstract addLights(engine : Engine) :void | Promise<void>
 
-    abstract animate(engine : Engine): void | Promise<void>
+    abstract animate(engine : Engine , delta : number): void | Promise<void>
 }

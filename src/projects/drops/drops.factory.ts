@@ -23,7 +23,6 @@ export class DropsFactory extends EngineFactory {
             Character._obj = loaded
             gameState.setState({character_loading : false})
         } , (progress) => {
-            console.log("progress",progress)
         })
     }
 
@@ -104,9 +103,9 @@ export class DropsFactory extends EngineFactory {
         const ambientLight = new THREE.AmbientLight(0xffffff , 1);
         engine.scene.add(ambientLight);
     }
-    animate(engine : Engine) {
+    animate(engine : Engine , delta : number) {
         this.physic.loop();
-        this.character?.loop();
+        this.character?.loop(delta);
         this.camera?.loop(engine)
     }
 }

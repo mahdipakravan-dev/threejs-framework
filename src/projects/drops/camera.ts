@@ -22,19 +22,25 @@ export class DropsCamera {
     }
 
     loop(engine : Engine) {
-
         const characterRigidBody = this.character.characterRigidBody
-        if(characterRigidBody) {
-            const characterPosition = characterRigidBody.translation()
-            characterPosition.z += 60
-            characterPosition.y += 80
 
-            const cameraLookAt = new THREE.Vector3().copy(characterRigidBody.translation())
-
-            // this.camera.position.copy(characterPosition)
-            // this.camera.lookAt(cameraLookAt)
-        }
         this.control?.update();
+
+        if(characterRigidBody) {
+            const characterPosition = characterRigidBody.translation();
+            const characterRotation = characterRigidBody.rotation();
+
+            const cameraOffset = new THREE.Vector3(0,20,100);
+            cameraOffset.applyQuaternion(characterRotation)
+            cameraOffset.add(characterPosition)
+
+            const targetOffset = new THREE.Vector3(0,10,0)
+            targetOffset.applyQuaternion(characterRotation)
+            targetOffset.add(characterPosition)
+
+            this.camera.position.lerp(cameraOffset , 0.5)
+            this.control?.target.lerp(targetOffset , 0.5)
+        }
 
         engine.renderer.render(engine.scene, this.camera);
     }
