@@ -1,11 +1,15 @@
 import * as THREE from "three";
 import {Physic} from "../../utils/physic.ts";
-import {inputInitialState, inputState} from "../../store/input-store.ts";
+import {inputInitialState, InputState, inputState} from "../../store/input-store.ts";
 import {Collider, KinematicCharacterController, RigidBody, RigidBodyType} from "@dimforge/rapier3d";
 import {Engine} from "../../engine.ts";
 import {GLTF} from 'three/addons/loaders/GLTFLoader.js';
-import {AnimationAction} from "three/src/animation/AnimationAction";
 
+enum CharacterAnimation {
+    Walk = "WALK",
+    Idle = "IDLE_ANIM",
+    Greeting = "GREETING"
+}
 export class Character {
     static _obj ?: GLTF
     public character ?: THREE.Mesh
@@ -17,9 +21,11 @@ export class Character {
     public characterController ?: KinematicCharacterController
     public mixer ?: THREE.AnimationMixer
     public animations ?: Map<string , THREE.AnimationAction>
+    public currentAction ?: THREE.AnimationAction
     constructor(private physic : Physic) {
         inputState.subscribe(input => {
             this.pressedInputs = input
+            this.onInput(input)
         })
     }
 
@@ -31,7 +37,8 @@ export class Character {
             this.animations!.set(clip.name , this.mixer!.clipAction(clip))
         })
 
-        this.animations.get("WALK")?.play();
+        console.log(this.animations)
+        this.animations.get(CharacterAnimation.Idle)?.play();
     }
 
 
@@ -65,6 +72,28 @@ export class Character {
         this.character.add(Character._obj.scene)
         this.instantiateAnimations(engine)
 
+    }
+
+    playAnimation(name : CharacterAnimation) {
+        const action = this.animations?.get(name);
+        if(!action) return;
+        action.reset();
+        action.play();
+        if(this.currentAction) action.crossFadeFrom(this.currentAction , 0.2 , true);
+
+        this.currentAction = action
+    }
+    onInput(input : InputState) {
+        if(
+            input.forward ||
+            input.backward ||
+            input.left ||
+            input.right
+        ) {
+            this.playAnimation(CharacterAnimation.Walk)
+        } else {
+            this.playAnimation(CharacterAnimation.Idle)
+        }
     }
 
     loop(delta : number) {
