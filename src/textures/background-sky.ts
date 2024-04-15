@@ -1,9 +1,9 @@
 import * as Three from "three"
-export class BackgroundMilkyway {
+export class BackgroundSky {
     static _obj : Three.Texture;
     constructor() {
         const loader = new Three.CubeTextureLoader();
-        loader.setPath( '/public/cube-textures/milky-way/');
+        loader.setPath( '/public/cube-textures/sky/');
 
         const textureCube = loader.load( [
             'px.png', 'nx.png',
@@ -11,6 +11,6 @@ export class BackgroundMilkyway {
             'pz.png', 'nz.png'
         ] );
 
-        BackgroundMilkyway._obj = textureCube
+        BackgroundSky._obj = textureCube
     }
 }

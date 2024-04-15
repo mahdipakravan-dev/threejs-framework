@@ -29,13 +29,15 @@ export class DropsCamera {
         this.control.enableDamping = true
         this.control.enableRotate = true
         this.control.enablePan = true
+
+        this.loopInIntroducing(engine)
     }
 
     loopInGame(characterRigidBody : RigidBody) {
         const characterPosition = characterRigidBody.translation();
         const characterRotation = characterRigidBody.rotation();
 
-        const cameraOffset = new THREE.Vector3(0,100,200);
+        const cameraOffset = new THREE.Vector3(0,60,140);
         cameraOffset.applyQuaternion(characterRotation)
         cameraOffset.add(characterPosition)
 
@@ -47,13 +49,24 @@ export class DropsCamera {
         this.control?.target.lerp(targetOffset , 0.5)
     }
 
-    loopInIntroducing(characterRigidBody : RigidBody) {
-        const cameraOffset = new THREE.Vector3(90,10,210);
+    loopInIntroducing(engine : Engine) {
+        const directLight = new THREE.DirectionalLight(0xffffff , 1);
+        directLight.position.set(10,2,100);
+        directLight.castShadow = true
+        directLight.shadow.camera.top = 30
+        directLight.shadow.camera.right = 30
+        directLight.shadow.camera.left = -30
+        directLight.shadow.camera.bottom = -30
+        directLight.shadow.bias = -0.002
+        directLight.shadow.normalBias = -0.011
+        engine.scene.add(directLight);
 
+        const cameraOffset = new THREE.Vector3(170,30,310);
         const targetOffset = new THREE.Vector3(0,10,0)
 
         this.camera.position.lerp(cameraOffset , 0.5)
         this.control?.target.lerp(targetOffset , 0.5)
+
     }
 
     loop(engine : Engine) {
@@ -61,18 +74,17 @@ export class DropsCamera {
 
         this.control?.update();
 
+        console.log(this.animState?.scene)
         if(characterRigidBody) {
             switch (this.animState?.scene) {
                 case SCENES.Gaming:
                     this.loopInGame(characterRigidBody)
                     break
                 case SCENES.Introducing:
-                    this.loopInIntroducing(characterRigidBody)
+                    // this.loopInIntroducing()
                     break
             }
         }
-
-        if(this.animState?.scene)
 
         engine.renderer.render(engine.scene, this.camera);
     }

@@ -45,8 +45,8 @@ export class Character {
             this.animations!.set(clip.name , this.mixer!.clipAction(clip))
         })
 
-
-        this.animations.get(CharacterAnimation.Greeting)?.play();
+        console.log(this.animations)
+        this.animations.get(CharacterAnimation.Idle)?.play();
     }
 
 
@@ -57,7 +57,6 @@ export class Character {
             new THREE.MeshStandardMaterial({color : "green" , wireframe : true , visible : false})
         )
         this.character.position.set(70,10,160)
-
         engine.scene.add(this.character)
         this.characterRigidBodyType = this.physic._rappier.RigidBodyDesc.kinematicPositionBased()
         this.characterRigidBody = this.physic._world?.createRigidBody(this.characterRigidBodyType as any)
@@ -86,6 +85,7 @@ export class Character {
         const action = this.animations?.get(name);
         if(!action) return;
         action.stop();
+        action.stopFading();
         action.reset();
         action.play();
         if(this.currentAction) action.crossFadeFrom(this.currentAction , 0.2 , true);
@@ -93,8 +93,6 @@ export class Character {
         this.currentAction = action
     }
     onInput(input : InputState) {
-        console.log('INPUT ' , this.animState?.scene)
-        if(this.animState?.scene === SCENES.Introducing) return;
         if(
             input.forward ||
             input.backward ||
@@ -107,43 +105,41 @@ export class Character {
         }
     }
 
-    calculateCharacterPositionInFrame() {
-        const movement = new THREE.Vector3(0,-1,0)
-        if(this.pressedInputs.forward) {
-            movement.z -= 1
-        }
-        if(this.pressedInputs.backward) {
-            movement.z += 1
-        }
-        if(this.pressedInputs.left) {
-            movement.x -= 1
-        }
-        if(this.pressedInputs.right) {
-            movement.x += 1
-        }
-
-        if(movement.length() !== 0) {
-            const angle = Math.atan2(movement.x , movement.z) + Math.PI
-            const characterRotation = new THREE.Quaternion().setFromAxisAngle(
-                new THREE.Vector3(0,1,0),
-                angle
-            )
-            this.character!.quaternion.slerp(characterRotation , 0.1)
-        }
-        movement.normalize().multiplyScalar(0.5);
-        movement.y -= 1;
-
-        this.characterController?.computeColliderMovement(this.collider! , movement)
-
-        const newPosition = new THREE.Vector3()
-            .copy(this.characterRigidBody?.translation()!)
-            .add(this.characterController?.computedMovement()!);
-
-        this.characterRigidBody?.setNextKinematicTranslation(newPosition)
-    }
     loop(delta : number) {
         if(this.animState?.scene === SCENES.Gaming) {
-            this.calculateCharacterPositionInFrame();
+            const movement = new THREE.Vector3(0,-1,0)
+            if(this.pressedInputs.forward) {
+                movement.z -= 3
+            }
+            if(this.pressedInputs.backward) {
+                movement.z += 3
+            }
+            if(this.pressedInputs.left) {
+                movement.x -= 3
+            }
+            if(this.pressedInputs.right) {
+                movement.x += 3
+            }
+
+            if(movement.length() !== 0) {
+                const angle = Math.atan2(movement.x , movement.z) + Math.PI
+                const characterRotation = new THREE.Quaternion().setFromAxisAngle(
+                    new THREE.Vector3(0,1,0),
+                    angle
+                )
+                this.character!.quaternion.slerp(characterRotation , 0.8)
+            }
+            movement.normalize().multiplyScalar(0.5);
+            movement.y -= 1;
+
+            this.characterController?.computeColliderMovement(this.collider! , movement)
+
+            const newPosition = new THREE.Vector3()
+                .copy(this.characterRigidBody?.translation()!)
+                .add(this.characterController?.computedMovement()!);
+
+            this.characterRigidBody?.setNextKinematicTranslation(newPosition)
+            this.character?.position.copy(this.characterRigidBody?.translation()!)
         }
         if(this.animState?.scene === SCENES.Introducing) {
             this.character?.rotation.set(0,Math.PI,0)

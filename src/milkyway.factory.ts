@@ -2,7 +2,7 @@ import {EngineFactory} from "./engine.ts";
 import {SunMesh} from "./meshes/sun.ts";
 import {EarthMesh} from "./meshes/earth.ts";
 import * as THREE from "three";
-import {BackgroundTexture} from "./textures/background.ts";
+import {BackgroundMilkyway} from "./textures/background.ts";
 import {MoonMaterial} from "./textures/moon.ts";
 import {EarthMaterial} from "./textures/earth.ts";
 import {SunMaterial} from "./textures/sun.ts";
@@ -19,12 +19,12 @@ export class MilkyWayFactory extends EngineFactory {
         engine.scene.add(SunMesh._obj)
     }
     createMaterials(engine): void {
-        new BackgroundTexture();
+        new BackgroundMilkyway();
         new MoonMaterial();
         new EarthMaterial();
         new SunMaterial();
 
-        engine.scene.background = BackgroundTexture._obj
+        engine.scene.background = BackgroundMilkyway._obj
     }
     addLights(engine): void {
         const pointLight = new THREE.PointLight(0xffffff , 2)

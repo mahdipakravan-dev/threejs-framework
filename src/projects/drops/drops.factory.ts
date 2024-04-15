@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import {Engine, EngineFactory} from "../../engine.ts";
-import {BackgroundStreet} from "../../textures/background-street.ts";
 import {Physic} from "../../utils/physic.ts";
 import {EarthMaterial} from "../../textures/earth.ts";
 import {Character} from "./character.ts";
@@ -8,6 +7,8 @@ import {gameState} from "../../store/game-store.ts";
 import {DropsCamera} from "./camera.ts";
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {Enviournment} from "./enviournment.ts";
+import {BackgroundSky} from "../../textures/background-sky.ts";
+import {BackgroundMilkyway} from "../../textures/background.ts";
 
 const gltfLoader = new GLTFLoader().setPath("models");
 
@@ -51,11 +52,11 @@ export class DropsFactory extends EngineFactory {
         }
     }
     createMaterials(engine) {
-        new BackgroundStreet();
+        new BackgroundMilkyway();
         new EarthMaterial()
 
-        engine.scene.background = BackgroundStreet._obj
-        engine.scene.environment = BackgroundStreet._obj
+        engine.scene.background = BackgroundMilkyway._obj
+        engine.scene.environment = BackgroundMilkyway._obj
     }
     addLights(engine) {
         const directLight = new THREE.DirectionalLight(0xffffff , 1);
@@ -71,8 +72,8 @@ export class DropsFactory extends EngineFactory {
     }
     animate(engine : Engine , delta : number) {
         this.physic.loop();
+        this.camera?.loop(engine)
         this.character?.loop(delta);
         this.enviournment?.loop()
-        this.camera?.loop(engine)
     }
 }
