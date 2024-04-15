@@ -4,6 +4,7 @@ import {inputInitialState, InputState, inputState} from "../../store/input-store
 import {Collider, KinematicCharacterController, RigidBody, RigidBodyType} from "@dimforge/rapier3d";
 import {Engine} from "../../engine.ts";
 import {GLTF} from 'three/addons/loaders/GLTFLoader.js';
+import {AnimationState, animationState, SCENES} from "../../store/animation-state.ts";
 
 enum CharacterAnimation {
     Walk = "WALK",
@@ -22,10 +23,17 @@ export class Character {
     public mixer ?: THREE.AnimationMixer
     public animations ?: Map<string , THREE.AnimationAction>
     public currentAction ?: THREE.AnimationAction
+    public animState ?: AnimationState
     constructor(private physic : Physic) {
         inputState.subscribe(input => {
             this.pressedInputs = input
             this.onInput(input)
+        })
+
+
+        this.animState = animationState.getState()
+        animationState.subscribe(animState => {
+            this.animState = animState
         })
     }
 
@@ -37,8 +45,8 @@ export class Character {
             this.animations!.set(clip.name , this.mixer!.clipAction(clip))
         })
 
-        console.log(this.animations)
-        this.animations.get(CharacterAnimation.Idle)?.play();
+
+        this.animations.get(CharacterAnimation.Greeting)?.play();
     }
 
 
@@ -48,7 +56,7 @@ export class Character {
             new THREE.BoxGeometry(8,28 , 8),
             new THREE.MeshStandardMaterial({color : "green" , wireframe : true , visible : false})
         )
-        this.character.position.set(10,10,-10)
+        this.character.position.set(70,10,160)
 
         engine.scene.add(this.character)
         this.characterRigidBodyType = this.physic._rappier.RigidBodyDesc.kinematicPositionBased()
@@ -77,6 +85,7 @@ export class Character {
     playAnimation(name : CharacterAnimation) {
         const action = this.animations?.get(name);
         if(!action) return;
+        action.stop();
         action.reset();
         action.play();
         if(this.currentAction) action.crossFadeFrom(this.currentAction , 0.2 , true);
@@ -84,6 +93,8 @@ export class Character {
         this.currentAction = action
     }
     onInput(input : InputState) {
+        console.log('INPUT ' , this.animState?.scene)
+        if(this.animState?.scene === SCENES.Introducing) return;
         if(
             input.forward ||
             input.backward ||
@@ -96,7 +107,7 @@ export class Character {
         }
     }
 
-    loop(delta : number) {
+    calculateCharacterPositionInFrame() {
         const movement = new THREE.Vector3(0,-1,0)
         if(this.pressedInputs.forward) {
             movement.z -= 1
@@ -129,8 +140,14 @@ export class Character {
             .add(this.characterController?.computedMovement()!);
 
         this.characterRigidBody?.setNextKinematicTranslation(newPosition)
-        this.character?.position.copy(this.characterRigidBody?.translation()!)
+    }
+    loop(delta : number) {
+        if(this.animState?.scene === SCENES.Gaming) {
+            this.calculateCharacterPositionInFrame();
+        }
+        if(this.animState?.scene === SCENES.Introducing) {
+            this.character?.rotation.set(0,Math.PI,0)
+        }
         this.mixer?.update(delta);
-
     }
 }

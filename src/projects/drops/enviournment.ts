@@ -12,6 +12,7 @@ export class Enviournment {
     createMesh(engine : Engine) {
         if(!Enviournment._obj) return
 
+        Enviournment._obj.scene.rotation.set(0 , Math.PI , 0)
         const physicalLayers = [
             "threes",
             "terrain",
@@ -24,7 +25,6 @@ export class Enviournment {
         ]
 
         for(const child of Enviournment._obj.scene.children) {
-            console.log(child.name)
             const isPhysicialObject = physicalLayers.some(keyword => child.name.includes(keyword))
 
             if(isPhysicialObject) {
@@ -38,6 +38,12 @@ export class Enviournment {
                 })
             }
         }
+
+        const portal1 = Enviournment._obj.scene.getObjectByName("doors")
+        const portal2 = Enviournment._obj.scene.getObjectByName("doors003")
+
+        console.log("Portals",portal1,portal2)
+
         engine.scene.add(Enviournment._obj.scene)
     }
 
