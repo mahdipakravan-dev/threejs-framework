@@ -20,6 +20,7 @@ export class Engine {
         this.canvas = document.getElementById("threejs")!;
         this.renderer = new THREE.WebGLRenderer({ canvas : this.canvas, antialias: true });
         this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
         this.pane = new Pane();
         this.engineFactory = engineFactory
         this.loaderFactory = new LoaderFactory();

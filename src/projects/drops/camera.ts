@@ -30,7 +30,7 @@ export class DropsCamera {
             const characterPosition = characterRigidBody.translation();
             const characterRotation = characterRigidBody.rotation();
 
-            const cameraOffset = new THREE.Vector3(0,20,100);
+            const cameraOffset = new THREE.Vector3(200,160,200);
             cameraOffset.applyQuaternion(characterRotation)
             cameraOffset.add(characterPosition)
 
